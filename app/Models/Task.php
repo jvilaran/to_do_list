@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Task extends Model
 {
-    public $fillable = ['title', 'description', 'is_completed'];
+    protected $fillable = ['title', 'description', 'status'];
     
 }
