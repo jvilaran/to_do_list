@@ -12,6 +12,10 @@
                 <p class="text-gray-500 mt-1">You have {{ $tasks->count() }} {{ $tasks->count() === 1 ? 'task' : 'tasks' }} registered</p>
             @endif
         </div>
+        <a href="/tasks/create" 
+           class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors shadow-sm">
+            <i class="fa-solid fa-plus mr-2"></i> New Task
+        </a>
     </div>
 
     @if($tasks->count() > 0)
@@ -53,10 +57,14 @@
                                class="inline-flex items-center px-3 py-1.5 bg-yellow-50 text-yellow-700 text-sm font-medium rounded-md hover:bg-yellow-100 transition-colors">
                                 <i class="fa-solid fa-pencil-alt"></i> Edit
                             </a>
-                            <button onclick="confirmDelete({{ $task->id }})"
-                                    class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 text-sm font-medium rounded-md hover:bg-red-100 transition-colors">
-                                <i class="fa-solid fa-trash"></i> Delete
-                            </button>
+                            <form action="/tasks/{{ $task->id }}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" onclick="return confirm('Are you sure you want to delete this task?')"
+                                        class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 text-sm font-medium rounded-md hover:bg-red-100 transition-colors">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -66,7 +74,7 @@
         {{-- Table --}}
         <div class="hidden xl:block mt-8">
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-900">
+                <table class="min-w-full divide-y divide-white">
                     <thead class="bg-indigo-900">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Task</th>
@@ -75,31 +83,35 @@
                             <th class="px-6 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-gray-200 divide-y divide-gray-200">
+                    <tbody class="bg-gray-900 divide-y divide-white">
                         @foreach($tasks as $task)
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-gray-700">
                             <td class="px-6 py-4">
                                 <div>
-                                    <div class="text-sm font-medium text-gray-900">{{ $task->title }}</div>
-                                    <div class="text-sm text-gray-500 truncate max-w-xs">{{ $task->description }}</div>
+                                    <div class="text-sm font-medium text-white">{{ $task->title }}</div>
+                                    <div class="text-sm text-gray-400 truncate max-w-xs">{{ $task->description }}</div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                     @if($task->status === 'completed') bg-green-100 text-green-800
                                     @elseif($task->status === 'in_progress') bg-yellow-100 text-yellow-800
-                                    @else text-gray-800
+                                    @else bg-gray-800 text-white
                                     @endif">
                                     {{ ucfirst($task->status) }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                 {{ $task->created_at->format('d/m/Y H:i') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
-                                <a href="/tasks/{{ $task->id }}" class="text-blue-600 hover:text-blue-900">View</a>
-                                <a href="/tasks/{{ $task->id }}/edit" class="text-yellow-600 hover:text-yellow-900">Edit</a>
-                                <button onclick="confirmDelete({{ $task->id }})" class="text-red-600 hover:text-red-900">Delete</button>
+                                <a href="/tasks/{{ $task->id }}" class="text-indigo-500 hover:text-indigo-300">View</a>
+                                <a href="/tasks/{{ $task->id }}/edit" class="text-yellow-500 hover:text-yellow-300">Edit</a>
+                                <form action="/tasks/{{ $task->id }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:text-red-300" onclick="return confirm('Are you sure you want to delete this task?')">Delete</button>
+                                </form>
                             </td>
                         </tr>
                         @endforeach
@@ -110,24 +122,14 @@
     @else
         {{-- Estado vacío --}}
         <div class="text-center py-12">
-            <div class="text-6xl mb-4">📝</div>
+            <div class="text-6xl mb-4"><i class="fa-solid fa-list-check"></i></div>
             <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes tareas aún</h3>
             <p class="text-gray-600 mb-6">¡Comienza creando tu primera tarea para organizarte mejor!</p>
             <a href="/tasks/create" 
                class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors shadow-sm">
-                ➕ Crear mi primera tarea
+                <i class="fa-solid fa-plus"></i> Crear mi primera tarea
             </a>
         </div>
     @endif
 </div>
-
-{{-- JavaScript para confirmación de eliminación --}}
-<script>
-function confirmDelete(taskId) {
-    if (confirm('¿Estás seguro de que quieres eliminar esta tarea? Esta acción no se puede deshacer.')) {
-        // Aquí implementarás la eliminación
-        alert('Función de eliminación pendiente de implementar');
-    }
-}
-</script>
 @endsection

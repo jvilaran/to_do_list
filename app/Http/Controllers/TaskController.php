@@ -3,24 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
-
-use function Psy\debug;
 
 class TaskController extends Controller
 {
+    // List of tasks
     public function index(): View
     {
-        $tasks = Task::all(); // Obtener todas las tareas
+        $tasks = Task::all(); // Get all the tasks
         return view('tasks.index', compact('tasks'));
     }
 
+    // Create form
     public function create(): View
     {
-        return view('tasks.create'); // Mostrar formulario de creación
+        return view('tasks.create');
     }
 
+    // Show specific task
     public function show(string $id): View
     {
         return view('tasks.show', [
@@ -28,29 +30,45 @@ class TaskController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    // Store new task
+    public function store(StoreTaskRequest $request)
     {
-        // Validar los datos del formulario
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'status' => 'required|in:pending,completed,in_progress'
-        ]);
+        // Automatically validated by StoreTaskRequest
+        $validated = $request->validated();
 
-        // Crear la nueva tarea
+        // Create the new task
         Task::create($validated);
 
-        // Redireccionar con mensaje de éxito
-        return redirect('/tasks')->with('success', 'Task created successfully!');
+        // Redirect with success message
+        return redirect('/')->with('success', 'Task created successfully!');
     }
 
-    public function update(Request $request, $id)
+    // Edit form - Show the edit form with current task data
+    public function edit($id): View
     {
-
+        $task = Task::findOrFail($id);
+        return view('tasks.edit', compact('task'));
     }
 
+    // Update task - Process the edit form
+    public function update(UpdateTaskRequest $request, $id)
+    {
+        $task = Task::findOrFail($id);
+        $validated = $request->validated();
+
+        // Update the task
+        $task->update($validated);
+
+        // Redirect with success message
+        return redirect('/')->with('success', 'Task updated successfully!');
+    }
+
+    // Delete task
     public function destroy($id)
     {
+        $task = Task::findOrFail($id);
+        $task->delete();
 
+        return redirect('/')->with('success', 'Task deleted successfully!');
     }
 }

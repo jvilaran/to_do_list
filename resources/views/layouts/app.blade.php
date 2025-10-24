@@ -21,13 +21,13 @@
                 {{-- Img/Title --}}
                 <div class="flex items-center">
                     <h1 class="text-xl font-semibold text-white">
-                        <a href="/tasks" class="hover:text-indigo-600 transition-colors"><i class="fa-solid fa-list-check"></i> To-Do List</a>
+                        <a href="/" class="hover:text-indigo-600 transition-colors"><i class="fa-solid fa-list-check"></i> To-Do List</a>
                     </h1>
                 </div>
                 
                 {{-- Nav routing --}}
                 <div class="flex items-center space-x-4">
-                    <a href="/tasks" 
+                    <a href="/" 
                        class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors 
                               {{ request()->is('tasks') && !request()->is('tasks/create') ? 'bg-indigo-50 text-indigo-700' : '' }}">
                         <i class="fa-solid fa-list-ul"></i> My Tasks
